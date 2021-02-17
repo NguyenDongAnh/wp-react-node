@@ -58,7 +58,7 @@ module.exports = {
     hot: true,
     historyApiFallback: true,
     // allowedHosts: ["192.168.2.170", "127.0.0.1"],
-    host: "192.168.2.170",
+    host: "0.0.0.0",
     port: 3000,
     compress: true,
     //serve static files
