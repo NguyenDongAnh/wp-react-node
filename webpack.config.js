@@ -5,7 +5,10 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
   mode: "development",
-  entry: { index: path.join(__dirname, "src", "index.js") },
+  entry: {
+    babel: "@babel/polyfill",
+    index: path.join(__dirname, "src", "index.js"),
+  },
   module: {
     rules: [
       {
@@ -57,12 +60,12 @@ module.exports = {
   devServer: {
     hot: true,
     historyApiFallback: true,
-    // allowedHosts: ["192.168.2.170", "127.0.0.1"],
+    // allowedHosts: [Domain Name],
     host: "0.0.0.0",
     port: 3000,
     compress: true,
     //serve static files
-    contentBase: path.join(__dirname, "public"),
+    contentBase: [path.join(__dirname, "public")],
     //serve manifest.json
     contentBasePublicPath: "/",
   },
@@ -79,5 +82,5 @@ module.exports = {
       },
     },
   },
-  stats: "Detailed"
+  stats: "Detailed",
 };

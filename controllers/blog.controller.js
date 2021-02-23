@@ -4,7 +4,9 @@ const Blog = mongoose.model("Blog");
 exports.insertBlog = function (req, res, next) {
   var blog = new Blog();
   blog.author = req.body.author;
-  //   console.log(req)
+  blog.title = req.body.title;
+  console.log(req.body)
+  // console.log(req);
   blog.save((err, doc) => {
     if (err) {
       console.log(err);
@@ -16,7 +18,6 @@ exports.insertBlog = function (req, res, next) {
 };
 
 exports.listBlog = function (req, res, next) {
-  console.log(req.params);
   Blog.find({}, (err, doc) => {
     return res.json(doc);
   });
@@ -28,8 +29,8 @@ exports.deleteBlog = function (req, res, next) {
     if (err) {
       console.log(err);
       return res.json({ message: "Fail!" });
-    } else if(doc) {
-        return res.status(200).json({ message: "Success!" });
+    } else if (doc) {
+      return res.status(200).json({ message: "Success!" });
     }
     return res.json({ message: "Fail!" });
   });

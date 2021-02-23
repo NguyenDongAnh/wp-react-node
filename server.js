@@ -7,16 +7,34 @@ const http = require("http");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const app = express();
+const path = require("path");
 
-const blog_route = require('./routes/blog.route')
-
-app.use(morgan("dev"));
+app.use(morgan("common"));
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
-app.use(cors());
+whitelist = ["http://192.168.2.170:3000","http://192.168.2.170:4200"];
+var corsOptions = {
+  origin: function (origin, callback) {
+    console.log(origin)
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  // origin: "http://192.168.2.170:3000",
+  methods: ["GET", "PUT", "POST", "DELETE"],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  credentials: true,
+  // "exposedHeaders":[]
+};
+app.use(cors(corsOptions));
+
+app.use(express.static(path.join(__dirname, "dist")));
 // app.use(function (req, res, next) {
 //   res.header("Access-Control-Allow-Origin", "YOUR-DOMAIN.TLD"); // update to match the domain you will make the request from
 //   res.header(
@@ -25,13 +43,16 @@ app.use(cors());
 //   );
 //   next();
 // });
-app.get("/", function (req, res, next) {
-  res.json({ message: "successful!" });
-});
 
-app.use("/blog",blog_route)
+// app.get("/*", function (req, res, next) {
+//   res.sendFile(path.join(__dirname, "dist", "index.html"));
+// });
+
+
+app.use("/api", require("./routes/routes"));
 
 port = process.env.PORT || 4200;
 app.set("port", port);
 
 http.createServer(app).listen(port);
+console.log("Server listen on 192.168.2.170:4200 or localhost:4200");

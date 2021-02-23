@@ -38,6 +38,7 @@ function Admin() {
       if (prop.layout === "/admin") {
         return (
           <Route
+            exact
             path={prop.layout + prop.path}
             render={(props) => <prop.component {...props} />}
             key={key}
