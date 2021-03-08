@@ -88,7 +88,7 @@ const dashboardRoutes = [
     name: "SignIn",
     icon: "nc-icon nc-single-02",
     component: SignIn,
-    layout: "/admin",
+    layout: "",
   },
 ];
 

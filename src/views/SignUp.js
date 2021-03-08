@@ -19,6 +19,7 @@ import IconButton from "@material-ui/core/IconButton";
 import DoneIcon from "@material-ui/icons/Done";
 import ClearIcon from "@material-ui/icons/Clear";
 import instance from "../http-common";
+import { withStyles } from "@material-ui/core/styles";
 import {
   MuiThemeProvider,
   createMuiTheme,
@@ -74,12 +75,12 @@ export default function SignUp(props) {
     lastname: "",
     email: "",
     password: "",
+    repassword: "",
     emailValidation: false,
-    passwordValidation: false,
     showPassword: false,
   });
-  let iconLetter, iconCapital, iconNumber, iconLength;
-  let validLetter, validCapital, validNumber, validLength;
+  let iconLetter, iconCapital, iconNumber, iconLength, iconMustMatch;
+  let validLetter, validCapital, validNumber, validLength, validMustMatch;
   const handleClickShowPassword = () => {
     setValues({ ...values, showPassword: !values.showPassword });
   };
@@ -108,12 +109,29 @@ export default function SignUp(props) {
     return false;
   };
   const handlePasswordValidation = () => {
-    if (validLetter && validCapital && validNumber && validLength) {
-      setValues({ ...values, passwordValidation: true });
-    } else {
-      setValues({ ...values, passwordValidation: false });
+    if (
+      validLetter &&
+      validCapital &&
+      validNumber &&
+      validLength &&
+      validMustMatch
+    ) {
+      return true;
     }
+    return false;
   };
+  const mustMatch = () => {
+    if (values.password == "" || values.repassword == "") return false;
+    if (values.password === values.repassword) {
+      return true;
+    }
+    return false;
+  };
+  function ValidationEmail(email) {
+    if (email === "") return true;
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  }
   let doneicon = (
     <DoneIcon
       fontSize="small"
@@ -135,11 +153,13 @@ export default function SignUp(props) {
   validCapital = handlePasswordCapital(values.password);
   validNumber = handlePasswordNumber(values.password);
   validLength = handlePasswordLength(values.password);
+  validMustMatch = mustMatch();
 
   iconLetter = validLetter ? doneicon : clearicon;
   iconCapital = validCapital ? doneicon : clearicon;
   iconNumber = validNumber ? doneicon : clearicon;
   iconLength = validLength ? doneicon : clearicon;
+  iconMustMatch = validMustMatch ? doneicon : clearicon;
   return (
     <MuiThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -183,13 +203,19 @@ export default function SignUp(props) {
               <Grid item xs={12}>
                 <TextField
                   value={values.email}
+                  error={!ValidationEmail(values.email)}
+                  helperText={
+                    !ValidationEmail(values.email) ? "Invalid Email !" : ""
+                  }
                   onChange={handleChange("email")}
                   variant="outlined"
+                  margin="normal"
                   required
                   fullWidth
                   id="email"
                   label="Email Address"
                   name="email"
+                  autoFocus
                   autoComplete="off"
                 />
               </Grid>
@@ -205,23 +231,37 @@ export default function SignUp(props) {
                   type={values.showPassword ? "text" : "password"}
                   id="password"
                   autoComplete="off"
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          onMouseDown={handleMouseDownPassword}
-                        >
-                          {values.showPassword ? (
-                            <Visibility />
-                          ) : (
-                            <VisibilityOff />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
+                  // InputProps={{
+                  //   endAdornment: (
+                  //     <InputAdornment position="end">
+                  //       <IconButton
+                  //         aria-label="toggle password visibility"
+                  //         onClick={handleClickShowPassword}
+                  //         onMouseDown={handleMouseDownPassword}
+                  //       >
+                  //         {values.showPassword ? (
+                  //           <Visibility />
+                  //         ) : (
+                  //           <VisibilityOff />
+                  //         )}
+                  //       </IconButton>
+                  //     </InputAdornment>
+                  //   ),
+                  // }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  value={values.repassword}
+                  variant="outlined"
+                  required
+                  fullWidth
+                  name="re-password"
+                  label="Re-password"
+                  type="password"
+                  id="re-password"
+                  onChange={handleChange("repassword")}
+                  autoComplete="off"
                 />
               </Grid>
               <Grid item xs={12}>
@@ -264,18 +304,16 @@ export default function SignUp(props) {
                   Minimum <b>8 characters</b> and Maximum <b>16 characters</b>
                 </Typography>
               </Grid>
-              {/* <Grid item xs={12}>
-              <TextField
-              variant="outlined"
-              required
-              fullWidth
-              name="re-password"
-              label="Re-password"
-              type="password"
-              id="re-password"
-              autoComplete="off"
-              />
-            </Grid> */}
+              <Grid item xs={12}>
+                {iconMustMatch}
+                <Typography
+                  component="span"
+                  variant="body2"
+                  style={mustMatch() ? { color: "green" } : { color: "red" }}
+                >
+                  Password and re-password must match
+                </Typography>
+              </Grid>
               <Grid item xs={12}>
                 <FormControlLabel
                   control={
@@ -293,8 +331,29 @@ export default function SignUp(props) {
               className={classes.submit}
               onClick={(e) => {
                 e.preventDefault();
-                handlePasswordValidation();
-                console.log(values.passwordValidation);
+                // if (handlePasswordValidation()) {
+                //   console.log(true);
+
+                // }
+                if (
+                  handlePasswordValidation() &&
+                  ValidationEmail(values.email) &&
+                  values.email != ""
+                ) {
+                  console.log(true);
+                  instance({
+                    method: "post",
+                    url: "/blog/create",
+                    data: {
+                      firstname: document.getElementById("firstName").value,
+                      lastname: document.getElementById("lastName").value,
+                      email: document.getElementById("email").value,
+                      password: document.getElementById("password").value,
+                    },
+                  }).then((response) => {
+                    console.log(response.data);
+                  });
+                }
               }}
             >
               Sign Up

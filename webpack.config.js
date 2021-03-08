@@ -82,5 +82,7 @@ module.exports = {
       },
     },
   },
-  stats: "Detailed",
+  stats: {
+    errorDetails:true
+  },
 };

@@ -1,24 +1,35 @@
 // 'use strict'
+require('dotenv').config()
 require("./models/database/db");
 const express = require("express");
-const session = require("express-session");
+var session = require("express-session");
 const morgan = require("morgan");
 const http = require("http");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const app = express();
 const path = require("path");
+const passport = require("passport")
 
+// console.log(process.env.EMAIL_HOST)
 app.use(morgan("common"));
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
-whitelist = ["http://192.168.2.170:3000","http://192.168.2.170:4200"];
+app.use(
+  session({
+    secret: "keyboard cat",
+    resave: false,
+    saveUninitialized: true,
+    // cookie: { secure: true },
+  })
+);
+whitelist = ["http://192.168.2.170:3000", "http://192.168.2.170:4200"];
 var corsOptions = {
   origin: function (origin, callback) {
-    console.log(origin)
+    console.log(origin);
     if (whitelist.indexOf(origin) !== -1 || !origin) {
       callback(null, true);
     } else {
@@ -44,12 +55,11 @@ app.use(express.static(path.join(__dirname, "dist")));
 //   next();
 // });
 
+app.use("/api", require("./routes/routes"));
+
 // app.get("/*", function (req, res, next) {
 //   res.sendFile(path.join(__dirname, "dist", "index.html"));
 // });
-
-
-app.use("/api", require("./routes/routes"));
 
 port = process.env.PORT || 4200;
 app.set("port", port);

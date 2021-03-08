@@ -81,6 +81,7 @@ function SignIn(props) {
     event.preventDefault();
   };
   const classes = useStyles();
+  console.log(props.location)
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />

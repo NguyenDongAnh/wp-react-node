@@ -1,7 +1,13 @@
 const mongoose = require("mongoose");
+const dbURL = process.env.DB_URL || process.env.mLab_URL
 mongoose.connect(
-  "mongodb://localhost:27017/BlogProject",
-  { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true },
+  dbURL,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    autoIndex: true,
+  },
   function (err) {
     if (err) {
       console.log("Fail!");
@@ -11,4 +17,6 @@ mongoose.connect(
     }
   }
 );
-require('../blog.model')
+require("../blog.model");
+require("../token.model");
+require("../user.model");
