@@ -4,11 +4,13 @@ const Schema = mongoose.Schema;
 const bcryptSalt = process.env.BCRYPT_SALT;
 const userSchema = new Schema(
   {
-    name: {
+    firstname: {
       type: String,
-      trim: true,
       required: true,
-      unique: true,
+    },
+    lastname: {
+      type: String,
+      required: true,
     },
     email: {
       type: String,
@@ -16,7 +18,19 @@ const userSchema = new Schema(
       unique: true,
       required: true,
     },
-    password: { type: String },
+    password: {
+      type: String,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ["Pending", "Active"],
+      default: "Pending",
+    },
+    confirmationCode: {
+      type: String,
+      unique: true,
+    },
   },
   {
     timestamps: true,

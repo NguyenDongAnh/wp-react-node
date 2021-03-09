@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
-const dbURL = process.env.DB_URL || process.env.mLab_URL
+const dbURL = process.env.DB_URL || process.env.mLab_URL;
 mongoose.connect(
   dbURL,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useFindAndModify: false,
     useCreateIndex: true,
     autoIndex: true,
   },

@@ -3,7 +3,7 @@ const handlebars = require("handlebars");
 const fs = require("fs");
 const path = require("path");
 
-const sendEmail = async (email, subject, payload, template) => {
+module.exports.sendEmail = async (email, subject, payload, template) => {
   try {
     // create reusable transporter object using the default SMTP transport
     const transporter = nodemailer.createTransport({
@@ -50,5 +50,16 @@ sendEmail(
   "./templates/layouts/main.handlebars"
 );
 */
-
-module.exports = sendEmail;
+module.exports.sendConfirmationEmail = (name, email, confirmationCode) => {
+  console.log("Check");
+  transport.sendMail({
+    from: user,
+    to: email,
+    subject: "Please confirm your account",
+    html: `<h1>Email Confirmation</h1>
+        <h2>Hello ${name}</h2>
+        <p>Thank you for subscribing. Please confirm your email by clicking on the following link</p>
+        <a href=http://localhost:8081/confirm/${confirmationCode}> Click here</a>
+        </div>`,
+  }).catch(err => console.log(err));
+};

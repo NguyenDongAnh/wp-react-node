@@ -26,6 +26,7 @@
         "express": "^4.17.1",
         "express-session": "^1.17.1",
         "file-loader": "^6.2.0",
+        "formik": "^2.2.6",
         "fs": "^0.0.1-security",
         "http": "0.0.1-security",
         "https": "^1.0.0",
@@ -45,7 +46,8 @@
         "react-notification-alert": "0.0.13",
         "react-router": "^5.2.0",
         "react-router-dom": "^5.2.0",
-        "reactstrap": "^8.9.0"
+        "reactstrap": "^8.9.0",
+        "yup": "^0.32.9"
     },
     "devDependencies": {
         "@babel/cli": "^7.12.13",
